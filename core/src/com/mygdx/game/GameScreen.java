@@ -51,6 +51,7 @@ public class GameScreen extends ScreenAdapter {
 
         game.batch.setProjectionMatrix(camera.combined);
         game.batch.begin();
+        map.testDraw(font, game.batch);
         font.draw(game.batch, "Test Variable: " + testVar, 5, 5);
         game.batch.end();
 

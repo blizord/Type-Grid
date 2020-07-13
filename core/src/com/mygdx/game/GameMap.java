@@ -1,6 +1,12 @@
 package com.mygdx.game;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Vector2;
 
 public class GameMap {
 
@@ -25,6 +31,22 @@ public class GameMap {
 
     }
 
+    public void testDraw(BitmapFont font, SpriteBatch batch) {
+        int[][] path = pathFind(3, 29, 13, 6);
+        for(int x = 0; x < width; x++) {
+            for(int y = 0; y < height; y++) {
+                if(path[x][y] != 999) {
+                    font.draw(batch, "" + path[x][y], x * 16 + 4, y * 16 + 4);
+                }
+            }
+        }
+    }
+
+    /**
+     * Draws map with lines
+     * @param shape
+     */
+
     public void draw(ShapeRenderer shape) {
         shape.setColor(1, 1, 1, 1);
         for(int x = 0; x < width; x++) {
@@ -46,6 +68,58 @@ public class GameMap {
             }
         }
     }
+
+    /**
+     * This method finds a path by flood filling map array starting at target position and reaching start position.
+     * @param x1 Starting x coordinate
+     * @param y1 Starting y coordinate
+     * @param x2 Target x coordinate
+     * @param y2 Target y coordinate
+     * @return Array with path (Starting at total length and ending at 0). Non-path positions are 999.
+     */
+
+    private int[][] pathFind(int x1, int y1, int x2, int y2) {
+        int[][] pathMap = new int[width][height];
+        for(int[] row: pathMap) {
+            Arrays.fill(row, 999);
+        }
+        ArrayList<Vector2> queue = new ArrayList<Vector2>();
+        int count = 0;
+        pathMap[x2][y2] = count;
+        queue.add(new Vector2(x2, y2));
+        while(queue.size() > 0) {
+            count++;
+            Vector2 point = queue.remove(0);
+            if((int)point.x == x1 && (int)point.y == y1) {
+                break;
+            }
+            if(inBounds((int)point.x - 1, (int)point.y) && grid[(int)point.x - 1][(int)point.y] != '-' && pathMap[(int)point.x - 1][(int)point.y] == 999) {
+                pathMap[(int)point.x - 1][(int)point.y] = count;
+                queue.add(new Vector2(point.x - 1, point.y));
+            }
+            if(inBounds((int)point.x + 1, (int)point.y) && grid[(int)point.x + 1][(int)point.y] != '-' && pathMap[(int)point.x + 1][(int)point.y] == 999) {
+                pathMap[(int)point.x + 1][(int)point.y] = count;
+                queue.add(new Vector2(point.x + 1, point.y));
+            }
+            if(inBounds((int)point.x, (int)point.y - 1) && grid[(int)point.x][(int)point.y - 1] != '-' && pathMap[(int)point.x][(int)point.y - 1] == 999) {
+                pathMap[(int)point.x][(int)point.y - 1] = count;
+                queue.add(new Vector2(point.x, point.y - 1));
+            }
+            if(inBounds((int)point.x, (int)point.y + 1) && grid[(int)point.x][(int)point.y + 1] != '-' && pathMap[(int)point.x][(int)point.y + 1] == 999) {
+                pathMap[(int)point.x][(int)point.y + 1] = count;
+                queue.add(new Vector2(point.x, point.y + 1));
+            }
+
+        }
+        return pathMap;
+    }
+
+    /**
+     * Checks if coordinates are within the bounds of the map
+     * @param x coordinate
+     * @param y cooridinate
+     * @return True if coordinates are in map
+     */
 
     private boolean inBounds(int x, int y) {
         if(x < 0 || x >= width || y < 0 || y >= height) {
