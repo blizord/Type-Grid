@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MapList {
-    public Map<String, String[]> maps = new HashMap<String, String[]>();
+    private Map<String, String[]> maps = new HashMap<String, String[]>();
     private String[] first = {"-----------------------------------------------------", 
                               "-----------------------------------------------------",
                               "-----------------------------------------------------",
@@ -37,5 +37,9 @@ public class MapList {
                               "---s-------------------------------------------------"};
     public MapList() {
         maps.put("first", first);
+    }
+
+    public String[] getMap(String name) {
+        return maps.get(name);
     }
 }

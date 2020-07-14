@@ -15,20 +15,35 @@ public class GameMap {
     private int tileSize = 16;
     private char[][] grid = new char[width][height];
     private MapList data = new MapList();
+    private Vector2 start;
+    private Vector2 end;
 
     public GameMap(String name) {
         load(name);
     }
 
     private void load(String name) {
-        String[] m = data.maps.get(name);
+        String[] m = data.getMap(name);
         for(int x = 0; x < width; x++) {
             for(int y = 0; y < height; y++) {
                 grid[x][y] = m[y].charAt(x);
+                if(m[y].charAt(x) == 's') {
+                    start = new Vector2(x, y);
+                }
+                if(m[y].charAt(x) == 'e') {
+                    end = new Vector2(x, y);
+                }
             }
 
         }
+    }
 
+    public Vector2 getStart() {
+        return start;
+    }
+
+    public Vector2 getEnd() {
+        return end;
     }
 
     public void testDraw(BitmapFont font, SpriteBatch batch) {
@@ -78,7 +93,7 @@ public class GameMap {
      * @return Array with path (Starting at total length and ending at 0). Non-path positions are 999.
      */
 
-    private int[][] pathFind(int x1, int y1, int x2, int y2) {
+    public int[][] pathFind(int x1, int y1, int x2, int y2) {
         int[][] pathMap = new int[width][height];
         for(int[] row: pathMap) {
             Arrays.fill(row, 999);

@@ -5,24 +5,23 @@ import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 
 public class GameScreen extends ScreenAdapter {
 
-    TypeGrid game;
-    GameMap map = new GameMap("first");
-    ShapeRenderer shape = new ShapeRenderer();
+    private World world = new World();
 
-    OrthographicCamera camera;
-    BitmapFont font = new BitmapFont(true);
+    private SpriteBatch batch = new SpriteBatch();
+	private  ShapeRenderer shape = new ShapeRenderer();
+	private BitmapFont font = new BitmapFont(true);
+    private OrthographicCamera camera = new OrthographicCamera();
 
     int testVar = 0;
+    Tower testTower = new DamageTower();
 
-    public GameScreen(TypeGrid game) {
-        this.game = game;
-
-        camera = new OrthographicCamera();
+    public GameScreen() {
         camera.setToOrtho(true, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     }
 
@@ -42,18 +41,19 @@ public class GameScreen extends ScreenAdapter {
 
         // Line drawing
 
-        game.shape.setProjectionMatrix(camera.combined);
-        game.shape.begin(ShapeType.Line);
-        map.draw(game.shape);
-        game.shape.end();
+        shape.setProjectionMatrix(camera.combined);
+        shape.begin(ShapeType.Line);
+        world.drawMap(shape);
+        testTower.draw(shape, 32, 32);
+        shape.end();
 
         // Sprite drawing
 
-        game.batch.setProjectionMatrix(camera.combined);
-        game.batch.begin();
-        map.testDraw(font, game.batch);
-        font.draw(game.batch, "Test Variable: " + testVar, 5, 5);
-        game.batch.end();
+        batch.setProjectionMatrix(camera.combined);
+        batch.begin();
+        world.testDrawMap(font, batch);
+        //font.draw(batch, "Test Variable: " + testVar, 5, 5);
+        batch.end();
 
     }
 
@@ -64,7 +64,9 @@ public class GameScreen extends ScreenAdapter {
     }
 
     @Override
-    public void hide() {
+    public void dispose() {
+        batch.dispose();
+		shape.dispose();
         font.dispose();
     }
 }
