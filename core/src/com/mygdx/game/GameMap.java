@@ -15,7 +15,7 @@ public class GameMap {
     private int tileSize = 16;
     private char[][] grid = new char[width][height];
     private MapList data = new MapList();
-    private Vector2 start;
+    private ArrayList<Vector2> starts = new ArrayList<Vector2>();
     private Vector2 end;
 
     public GameMap(String name) {
@@ -28,7 +28,7 @@ public class GameMap {
             for(int y = 0; y < height; y++) {
                 grid[x][y] = m[y].charAt(x);
                 if(m[y].charAt(x) == 's') {
-                    start = new Vector2(x, y);
+                    starts.add(new Vector2(x,  y));
                 }
                 if(m[y].charAt(x) == 'e') {
                     end = new Vector2(x, y);
@@ -38,12 +38,23 @@ public class GameMap {
         }
     }
 
-    public Vector2 getStart() {
-        return start;
+    public ArrayList<Vector2> getStarts() {
+        return starts;
     }
 
     public Vector2 getEnd() {
         return end;
+    }
+
+    public int getTileSize() {
+        return tileSize;
+    }
+
+    public boolean open(int x, int y) {
+        if(inBounds(x, y) && grid[x][y] == '-') {
+            return true;
+        }
+        return false;
     }
 
     public void testDraw(BitmapFont font, SpriteBatch batch) {
@@ -136,7 +147,7 @@ public class GameMap {
      * @return True if coordinates are in map
      */
 
-    private boolean inBounds(int x, int y) {
+    public boolean inBounds(int x, int y) {
         if(x < 0 || x >= width || y < 0 || y >= height) {
             return false;
         }

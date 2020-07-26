@@ -3,10 +3,13 @@ package com.mygdx.game;
 import com.badlogic.gdx.Game;
 
 public class TypeGrid extends Game {
+
+	private Game game;
 	
 	@Override
 	public void create () {
-		setScreen(new GameScreen());
+		game = this;
+		setScreen(new SelectScreen(game));
 	}
 
 	@Override
